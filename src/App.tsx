@@ -40,7 +40,7 @@ function App() {
           type="file"
           name="cameraInput"
           id="cameraInput"
-          capture
+          // capture
           accept="image/*"
           onChange={handleMediaCapture}
         />
