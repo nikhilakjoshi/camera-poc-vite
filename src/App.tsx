@@ -2,17 +2,28 @@ import { useCallback, useRef, useState } from "react";
 import "./App.css";
 import React from "react";
 
+const blobToBase64 = (blob: File) => {
+  return new Promise<string>((resolve, _) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.readAsDataURL(blob);
+  });
+};
+
 function App() {
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const [isImg, setIsImg] = useState(false);
   const [imgUrl, setImgUrl] = useState("");
+  const [base64String, setBase64String] = useState("");
   const handleMediaCapture = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (!e.target.files) return;
+      const a = e.target.files[0];
       const file = URL.createObjectURL(e.target.files[0]);
-      console.log(file);
       setIsImg(true);
       setImgUrl(file);
+      const base64 = await blobToBase64(a);
+      setBase64String(base64);
     },
     []
   );
@@ -34,7 +45,7 @@ function App() {
         />
       </div>
       {/* {isImg && imgUrl && <img src={imgUrl} alt="Captured Image" />} */}
-      {isImg && imgUrl && <pre>{imgUrl}</pre>}
+      {isImg && imgUrl && <pre>{base64String}</pre>}
     </React.Fragment>
   );
 }
