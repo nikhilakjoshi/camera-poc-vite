@@ -33,7 +33,8 @@ function App() {
           onChange={handleMediaCapture}
         />
       </div>
-      {isImg && imgUrl && <img src={imgUrl} alt="Captured Image" />}
+      {/* {isImg && imgUrl && <img src={imgUrl} alt="Captured Image" />} */}
+      {isImg && imgUrl && <pre>{imgUrl}</pre>}
     </React.Fragment>
   );
 }
