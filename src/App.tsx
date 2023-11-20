@@ -41,7 +41,7 @@ function App() {
           name="cameraInput"
           id="cameraInput"
           capture="environment"
-          accept="image/*"
+          accept="image/*;capture=camera"
           onChange={handleMediaCapture}
         />
       </div>
