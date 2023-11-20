@@ -24,6 +24,7 @@ function App() {
       setImgUrl(file);
       const base64 = await blobToBase64(a);
       setBase64String(base64);
+      console.log(base64);
     },
     []
   );
@@ -45,7 +46,7 @@ function App() {
         />
       </div>
       {/* {isImg && imgUrl && <img src={imgUrl} alt="Captured Image" />} */}
-      {isImg && imgUrl && <pre>{base64String}</pre>}
+      {/* {isImg && imgUrl && <pre>{base64String}</pre>} */}
     </React.Fragment>
   );
 }
