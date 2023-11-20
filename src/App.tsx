@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import "./App.css";
 import React from "react";
 
@@ -12,18 +12,18 @@ const blobToBase64 = (blob: File) => {
 
 function App() {
   const cameraInputRef = useRef<HTMLInputElement>(null);
-  const [isImg, setIsImg] = useState(false);
-  const [imgUrl, setImgUrl] = useState("");
-  const [base64String, setBase64String] = useState("");
+  // const [isImg, setIsImg] = useState(false);
+  // const [imgUrl, setImgUrl] = useState("");
+  // const [base64String, setBase64String] = useState("");
   const handleMediaCapture = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (!e.target.files) return;
       const a = e.target.files[0];
-      const file = URL.createObjectURL(e.target.files[0]);
-      setIsImg(true);
-      setImgUrl(file);
+      // const file = URL.createObjectURL(e.target.files[0]);
+      // setIsImg(true);
+      // setImgUrl(file);
       const base64 = await blobToBase64(a);
-      setBase64String(base64);
+      // setBase64String(base64);
       console.log(base64);
     },
     []
