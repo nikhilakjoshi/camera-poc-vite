@@ -13,8 +13,6 @@ const blobToBase64 = (blob: File) => {
 
 function getMobileOperatingSystem() {
   const userAgent = navigator.userAgent || navigator.vendor;
-  // ! OVERRIDING FOR NOW
-  return "iOS";
   // Windows Phone must come first because its UA also contains "Android"
   if (/windows phone/i.test(userAgent)) {
     return "Windows Phone";
@@ -72,7 +70,7 @@ function App() {
 
   return (
     <React.Fragment>
-      {userAgent === "iOS" && (
+      {userAgent === "iOS" ? (
         <div className="mainContainer">
           <label htmlFor="cameraInput" className="cameraLabel">
             Open Camera
@@ -87,8 +85,9 @@ function App() {
             onChange={handleMediaCapture}
           />
         </div>
+      ) : (
+        <Home />
       )}
-      {userAgent === "Android" && <Home />}
       {/* {isImg && imgUrl && <img src={imgUrl} alt="Captured Image" />} */}
       {/* {isImg && imgUrl && <pre>{base64String}</pre>} */}
     </React.Fragment>

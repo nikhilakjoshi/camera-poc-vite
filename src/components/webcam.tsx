@@ -1,13 +1,15 @@
 // import Webcam from "react-webcam";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Konva from "konva";
-import { Camera, CameraType } from "react-camera-pro";
+// import { Camera, CameraType } from "react-camera-pro";
+import Webcam from "react-webcam";
 
 export default function Home() {
-  //   const webcamRef = useRef<Webcam>(null);
-  const cameraProRef = useRef<CameraType>(null);
+  const webcamRef = useRef<Webcam>(null);
+  //   const cameraProRef = useRef<CameraType>(null);
   const [isPicClicked, setIsPicClicked] = useState(false);
   const [imgSrc, setImgSrc] = useState<string | null | undefined>(null);
+  const [imageCapture, setImageCapture] = useState<any>(null);
   const [screenShotSrc, setScreenShotSrc] = useState<string | null | undefined>(
     null
   );
@@ -28,15 +30,23 @@ export default function Home() {
     };
   }, []);
 
+  //   useEffect(() => {
+  //     const a = webcamRef.current?.stream;
+  //   }, []);
+
   const handleCapture = useCallback(() => {
     setScreenShotSrc(null);
-    const a = cameraProRef.current?.takePhoto();
-    // const a = webcamRef.current?.getScreenshot({
-    //   height,
-    //   width,
-    // });
+    // const a = cameraProRef.current?.takePhoto();
+    const a = webcamRef.current?.getScreenshot();
     setImgSrc(a);
     setIsPicClicked(true);
+    imageCapture
+      .takePhoto({
+        fillLightMode: "flash",
+      })
+      .then((blob: any) => {
+        console.log(blob);
+      });
   }, [screenShotHeight, screenShotWidth]);
 
   useEffect(() => {
@@ -91,6 +101,14 @@ export default function Home() {
     }
   }, [imgSrc]);
 
+  useEffect(() => {
+    if (webcamRef.current) {
+      const track = webcamRef.current.stream?.getTracks()[0]!;
+      console.log(track);
+      if (track) setImageCapture(new ImageCapture(track));
+    }
+  }, [webcamRef.current]);
+
   const Comp = () => {
     if (isPicClicked)
       return (
@@ -113,41 +131,43 @@ export default function Home() {
       );
     return (
       <div className="relative h-[100dvh] w-[100dvw]">
-        {/* <Webcam
+        <Webcam
           ref={webcamRef}
+          audio={false}
           screenshotFormat="image/png"
           imageSmoothing={false}
+          className="w-screen h-screen object-cover"
           screenshotQuality={1}
-          videoConstraints={{
-            height: {
-              min: height,
-              ideal: height,
-              max: height,
-            },
-            width: {
-              min: width,
-              ideal: width,
-              max: width,
-            },
-            aspectRatio: 1 / ratio,
-            facingMode: "environment",
-            noiseSuppression: true,
-            echoCancellation: true,
-          }}
-        /> */}
-        <Camera
+          //   videoConstraints={{
+          //     height: {
+          //       min: height,
+          //       ideal: height,
+          //       max: height,
+          //     },
+          //     width: {
+          //       min: width,
+          //       ideal: width,
+          //       max: width,
+          //     },
+          //     aspectRatio: 1 / ratio,
+          //     facingMode: "environment",
+          //     noiseSuppression: true,
+          //     echoCancellation: true,
+          //   }}
+        />
+        {/* <Camera
           facingMode="environment"
           aspectRatio="cover"
           errorMessages={{}}
           ref={cameraProRef}
-        />
+        /> */}
         <div className="absolute bottom-2 left-0 right-0 z-10 flex items-center">
           <button
             onClick={handleCapture}
             className="mx-auto aspect-square h-16 rounded-full border-4 border-blue-200 bg-blue-400 bg-opacity-75 outline-1 outline-lime-200"
           ></button>
         </div>
-        <div className="cheque frame absolute inset-0 grid place-items-center">
+        {/* <div className="cheque frame absolute inset-0 grid place-items-center">
           <div
             className="rounded border-2 border-white"
             style={{
@@ -155,7 +175,7 @@ export default function Home() {
               height: screenShotHeight,
             }}
           ></div>
-        </div>
+        </div> */}
         {/* <div className="absolute left-0 right-0 top-2">
           <div className="rounded bg-white">
             {`screenshotHeight: ${screenShotHeight}, screenshotWidth: ${screenShotWidth}, height: ${height}, width: ${width}, ratio: ${ratio}`}
