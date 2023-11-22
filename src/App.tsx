@@ -12,8 +12,9 @@ const blobToBase64 = (blob: File) => {
 };
 
 function getMobileOperatingSystem() {
-  var userAgent = navigator.userAgent || navigator.vendor;
-
+  const userAgent = navigator.userAgent || navigator.vendor;
+  // ! OVERRIDING FOR NOW
+  return "iOS";
   // Windows Phone must come first because its UA also contains "Android"
   if (/windows phone/i.test(userAgent)) {
     return "Windows Phone";
