@@ -41,17 +41,15 @@ export default function Home() {
     // const a = webcamRef.current?.getScreenshot();
     // setImgSrc(a);
     // setIsPicClicked(true);
-    console.log(imageCapture.current);
+    // console.log(imageCapture.current);
     if (imageCapture.current) {
       const capabilities = await imageCapture.current.getPhotoCapabilities();
+      console.log({ capabilities });
       imageCapture.current
         .takePhoto({
-          fillLightMode: capabilities.fillLightMode.includes("flash")
+          fillLightMode: capabilities.fillLightMode?.includes("flash")
             ? "flash"
-            : "off",
-          imageHeight: capabilities.imageHeight.max,
-          imageWidth: capabilities.imageWidth.max,
-          redEyeReduction: false,
+            : undefined,
         })
         .then((blob: any) => {
           console.log(blob);
@@ -118,7 +116,6 @@ export default function Home() {
         .then((mediaStream) => {
           const track = mediaStream.getVideoTracks()[0];
           if (videoRef.current) videoRef.current.srcObject = mediaStream;
-          console.log({ track });
           if (track) imageCapture.current = new ImageCapture(track);
         });
     }
