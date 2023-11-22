@@ -1,16 +1,16 @@
 // import Webcam from "react-webcam";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Konva from "konva";
-// import { Camera, CameraType } from "react-camera-pro";
-import Webcam from "react-webcam";
+import { Camera, CameraType } from "react-camera-pro";
+// import Webcam from "react-webcam";
 
 export default function Home() {
-  const webcamRef = useRef<Webcam>(null);
-  //   const cameraProRef = useRef<CameraType>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  //   const webcamRef = useRef<Webcam>(null);
+  const cameraProRef = useRef<CameraType>(null);
+  //   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPicClicked, setIsPicClicked] = useState(false);
-  const [imgSrc] = useState<string | null | undefined>(null);
-  const imageCapture = useRef<ImageCapture | null>(null);
+  const [imgSrc, setImgSrc] = useState<string | null | undefined>(null);
+  //   const imageCapture = useRef<ImageCapture | null>(null);
   const [screenShotSrc, setScreenShotSrc] = useState<string | null | undefined>(
     null
   );
@@ -37,24 +37,24 @@ export default function Home() {
 
   const handleCapture = useCallback(async () => {
     setScreenShotSrc(null);
-    // const a = cameraProRef.current?.takePhoto();
+    const a = cameraProRef.current?.takePhoto();
     // const a = webcamRef.current?.getScreenshot();
-    // setImgSrc(a);
-    // setIsPicClicked(true);
+    setImgSrc(a);
+    setIsPicClicked(true);
     // console.log(imageCapture.current);
-    if (imageCapture.current) {
-      const capabilities = await imageCapture.current.getPhotoCapabilities();
-      console.log({ capabilities });
-      imageCapture.current
-        .takePhoto({
-          fillLightMode: capabilities.fillLightMode?.includes("flash")
-            ? "flash"
-            : undefined,
-        })
-        .then((blob: any) => {
-          console.log(blob);
-        });
-    }
+    // if (imageCapture.current) {
+    //   const capabilities = await imageCapture.current.getPhotoCapabilities();
+    //   console.log({ capabilities });
+    //   imageCapture.current
+    //     .takePhoto({
+    //       fillLightMode: capabilities.fillLightMode?.includes("flash")
+    //         ? "flash"
+    //         : undefined,
+    //     })
+    //     .then((blob: any) => {
+    //       console.log(blob);
+    //     });
+    // }
   }, [screenShotHeight, screenShotWidth]);
 
   useEffect(() => {
@@ -109,17 +109,17 @@ export default function Home() {
     }
   }, [imgSrc]);
 
-  useEffect(() => {
-    if (webcamRef.current) {
-      navigator.mediaDevices
-        .getUserMedia({ video: true })
-        .then((mediaStream) => {
-          const track = mediaStream.getVideoTracks()[0];
-          if (videoRef.current) videoRef.current.srcObject = mediaStream;
-          if (track) imageCapture.current = new ImageCapture(track);
-        });
-    }
-  }, [webcamRef.current]);
+  //   useEffect(() => {
+  //     if (webcamRef.current) {
+  //       navigator.mediaDevices
+  //         .getUserMedia({ video: true })
+  //         .then((mediaStream) => {
+  //           const track = mediaStream.getVideoTracks()[0];
+  //           if (videoRef.current) videoRef.current.srcObject = mediaStream;
+  //           if (track) imageCapture.current = new ImageCapture(track);
+  //         });
+  //     }
+  //   }, [webcamRef.current]);
 
   const Comp = () => {
     if (isPicClicked)
@@ -143,8 +143,7 @@ export default function Home() {
       );
     return (
       <div className="relative h-[100dvh] w-[100dvw]">
-        {/* <video className="h-screen w-screen" ref={videoRef} /> */}
-        <Webcam
+        {/* <Webcam
           ref={webcamRef}
           audio={false}
           screenshotFormat="image/png"
@@ -154,13 +153,13 @@ export default function Home() {
           videoConstraints={{
             facingMode: "environment",
           }}
-        />
-        {/* <Camera
+        /> */}
+        <Camera
           facingMode="environment"
           aspectRatio="cover"
           errorMessages={{}}
           ref={cameraProRef}
-        /> */}
+        />
         <div className="absolute bottom-2 left-0 right-0 z-10 flex items-center">
           <button
             onClick={handleCapture}
