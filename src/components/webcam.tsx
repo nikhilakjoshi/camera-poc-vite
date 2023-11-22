@@ -7,9 +7,10 @@ import Webcam from "react-webcam";
 export default function Home() {
   const webcamRef = useRef<Webcam>(null);
   //   const cameraProRef = useRef<CameraType>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [isPicClicked, setIsPicClicked] = useState(false);
   const [imgSrc, setImgSrc] = useState<string | null | undefined>(null);
-  const [imageCapture, setImageCapture] = useState<any>(null);
+  const imageCapture = useRef<ImageCapture | null>(null);
   const [screenShotSrc, setScreenShotSrc] = useState<string | null | undefined>(
     null
   );
@@ -37,16 +38,16 @@ export default function Home() {
   const handleCapture = useCallback(() => {
     setScreenShotSrc(null);
     // const a = cameraProRef.current?.takePhoto();
-    const a = webcamRef.current?.getScreenshot();
-    setImgSrc(a);
-    setIsPicClicked(true);
-    imageCapture
-      .takePhoto({
-        fillLightMode: "flash",
-      })
-      .then((blob: any) => {
+    // const a = webcamRef.current?.getScreenshot();
+    // setImgSrc(a);
+    // setIsPicClicked(true);
+    console.log(imageCapture.current);
+    if (imageCapture.current) {
+      imageCapture.current.getPhotoCapabilities().then((a) => console.log(a));
+      imageCapture.current.takePhoto().then((blob: any) => {
         console.log(blob);
       });
+    }
   }, [screenShotHeight, screenShotWidth]);
 
   useEffect(() => {
@@ -103,9 +104,14 @@ export default function Home() {
 
   useEffect(() => {
     if (webcamRef.current) {
-      const track = webcamRef.current.stream?.getTracks()[0]!;
-      console.log(track);
-      if (track) setImageCapture(new ImageCapture(track));
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((mediaStream) => {
+          const track = mediaStream.getVideoTracks()[0];
+          if (videoRef.current) videoRef.current.srcObject = mediaStream;
+          console.log({ track });
+          if (track) imageCapture.current = new ImageCapture(track);
+        });
     }
   }, [webcamRef.current]);
 
@@ -131,6 +137,7 @@ export default function Home() {
       );
     return (
       <div className="relative h-[100dvh] w-[100dvw]">
+        {/* <video className="h-screen w-screen" ref={videoRef} /> */}
         <Webcam
           ref={webcamRef}
           audio={false}
@@ -141,22 +148,6 @@ export default function Home() {
           videoConstraints={{
             facingMode: "environment",
           }}
-          //   videoConstraints={{
-          //     height: {
-          //       min: height,
-          //       ideal: height,
-          //       max: height,
-          //     },
-          //     width: {
-          //       min: width,
-          //       ideal: width,
-          //       max: width,
-          //     },
-          //     aspectRatio: 1 / ratio,
-          //     facingMode: "environment",
-          //     noiseSuppression: true,
-          //     echoCancellation: true,
-          //   }}
         />
         {/* <Camera
           facingMode="environment"
