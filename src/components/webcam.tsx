@@ -9,7 +9,7 @@ export default function Home() {
   //   const cameraProRef = useRef<CameraType>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPicClicked, setIsPicClicked] = useState(false);
-  const [imgSrc, setImgSrc] = useState<string | null | undefined>(null);
+  const [imgSrc] = useState<string | null | undefined>(null);
   const imageCapture = useRef<ImageCapture | null>(null);
   const [screenShotSrc, setScreenShotSrc] = useState<string | null | undefined>(
     null
@@ -35,7 +35,7 @@ export default function Home() {
   //     const a = webcamRef.current?.stream;
   //   }, []);
 
-  const handleCapture = useCallback(() => {
+  const handleCapture = useCallback(async () => {
     setScreenShotSrc(null);
     // const a = cameraProRef.current?.takePhoto();
     // const a = webcamRef.current?.getScreenshot();
@@ -43,10 +43,19 @@ export default function Home() {
     // setIsPicClicked(true);
     console.log(imageCapture.current);
     if (imageCapture.current) {
-      imageCapture.current.getPhotoCapabilities().then((a) => console.log(a));
-      imageCapture.current.takePhoto().then((blob: any) => {
-        console.log(blob);
-      });
+      const capabilities = await imageCapture.current.getPhotoCapabilities();
+      imageCapture.current
+        .takePhoto({
+          fillLightMode: capabilities.fillLightMode.includes("flash")
+            ? "flash"
+            : "off",
+          imageHeight: capabilities.imageHeight.max,
+          imageWidth: capabilities.imageWidth.max,
+          redEyeReduction: false,
+        })
+        .then((blob: any) => {
+          console.log(blob);
+        });
     }
   }, [screenShotHeight, screenShotWidth]);
 
