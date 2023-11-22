@@ -138,6 +138,9 @@ export default function Home() {
           imageSmoothing={false}
           className="w-screen h-screen object-cover"
           screenshotQuality={1}
+          videoConstraints={{
+            facingMode: "environment",
+          }}
           //   videoConstraints={{
           //     height: {
           //       min: height,
