@@ -48,8 +48,9 @@ function getMobileOperatingSystem() {
 
 function App() {
   const cameraInputRef = useRef<HTMLInputElement>(null);
-  // const [isImg, setIsImg] = useState(false);
-  // const [imgUrl, setImgUrl] = useState("");
+  const placeholderRef = useRef<HTMLDivElement>(null);
+  const [isImg, setIsImg] = useState(false);
+  const [imgUrl, setImgUrl] = useState("");
   // const [base64String, setBase64String] = useState("");
   const [userAgent] = useState<"Windows Phone" | "Android" | "iOS" | "unknown">(
     getMobileOperatingSystem()
@@ -58,15 +59,54 @@ function App() {
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (!e.target.files) return;
       const a = e.target.files[0];
-      // const file = URL.createObjectURL(e.target.files[0]);
-      // setIsImg(true);
-      // setImgUrl(file);
+      const file = URL.createObjectURL(e.target.files[0]);
+      setIsImg(true);
+      setImgUrl(file);
       const base64 = await blobToBase64(a);
       // setBase64String(base64);
-      console.log(base64);
+      const image = new Image();
+      image.src = base64;
+      image.onload = () => {
+        const resizedImage = resizeMe(image);
+        console.log(resizedImage);
+      };
+      // console.log(base64);
     },
     []
   );
+
+  const resizeMe = useCallback((img: HTMLImageElement) => {
+    let canvas = document.createElement("canvas");
+
+    let width = img.width;
+    let height = img.height;
+    let max_width = width * 0.7;
+    let max_height = height * 0.7;
+
+    // calculate the width and height, constraining the proportions
+    if (width > height) {
+      if (width > max_width) {
+        //height *= max_width / width;
+        height = Math.round((height *= max_width / width));
+        width = max_width;
+      }
+    } else {
+      if (height > max_height) {
+        //width *= max_height / height;
+        width = Math.round((width *= max_height / height));
+        height = max_height;
+      }
+    }
+
+    // resize the canvas and draw the image data into it
+    canvas.width = width;
+    canvas.height = height;
+    let ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.drawImage(img, 0, 0, width, height);
+    if (placeholderRef.current) placeholderRef.current.appendChild(canvas); // do the actual resized preview
+    return canvas.toDataURL("image/jpeg", 0.7); // get the data from canvas as 70% JPG (can be also PNG, etc.)
+  }, []);
 
   return (
     <React.Fragment>
@@ -88,7 +128,10 @@ function App() {
       ) : (
         <Home />
       )}
-      {/* {isImg && imgUrl && <img src={imgUrl} alt="Captured Image" />} */}
+      {isImg && imgUrl && (
+        <img src={imgUrl} className="hidden" alt="Captured Image" />
+      )}
+      <div className="hidden" ref={placeholderRef}></div>
       {/* {isImg && imgUrl && <pre>{base64String}</pre>} */}
     </React.Fragment>
   );
