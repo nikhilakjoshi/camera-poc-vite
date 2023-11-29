@@ -94,7 +94,9 @@ export default function Home() {
         stage.add(layer);
         image.enhance(0.5);
         // * NEW KONVA FUNCTION ENDS * //
-        const croppedDataUrl = image.toDataURL();
+        const croppedDataUrl = image.toDataURL({
+          pixelRatio: 2,
+        });
         console.log(croppedDataUrl.split(",")[1]);
         setScreenShotSrc(croppedDataUrl);
       };
